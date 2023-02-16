@@ -206,7 +206,7 @@ $("#controls").on("click", function(e) {
 
 $("#interaction, #tile-transition, #controls").addClass("control-on");
 
-
+//마커
 var position = new naver.maps.LatLng(37.60011214750527, 126.70897451513594);
 
 var marker = new naver.maps.Marker({
@@ -264,7 +264,7 @@ naver.maps.Event.addListener(map, 'streetLayer_changed', function(streetLayer){
     }
 });
 
-
+//마커 및 레이어 이동
 naver.maps.Event.addListener(map, 'click', function(e) {
     marker.setPosition(e.coord);
 
@@ -278,14 +278,6 @@ naver.maps.Event.addListener(map, 'click', function(e) {
     }
 });
 
-//////
-
-
-
-
-
-
-//////
 var pano = null;
 
 var panoramaOptions = {
