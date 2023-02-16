@@ -215,18 +215,79 @@ var marker = new naver.maps.Marker({
 
 });
 
+// 거리뷰 레이어를 생성합니다.
+var streetLayer = new naver.maps.StreetLayer();
+naver.maps.Event.once(map, 'init', function() {
+    streetLayer.setMap(map);
+});
+
+// 거리뷰 버튼에 이벤트를 바인딩합니다.
+var btn = $('#street');
+btn.on("click", function(e) {
+    e.preventDefault();
+
+    // 거리뷰 레이어가 지도 위에 있으면 거리뷰 레이어를 지도에서 제거하고,
+    // 거리뷰 레이어가 지도 위에 없으면 거리뷰 레이어를 지도에 추가합니다.
+    if (streetLayer.getMap()) {
+        streetLayer.setMap(null);
+    } else {
+        streetLayer.setMap(map);
+    }
+});
+
+// 거리뷰 레이어를 생성합니다.
+var streetLayer = new naver.maps.StreetLayer();
+naver.maps.Event.once(map, 'init', function() {
+    streetLayer.setMap(map);
+});
+
+// 거리뷰 버튼에 이벤트를 바인딩합니다.
+var btn = $('#street');
+btn.on("click", function(e) {
+    e.preventDefault();
+
+    // 거리뷰 레이어가 지도 위에 있으면 거리뷰 레이어를 지도에서 제거하고,
+    // 거리뷰 레이어가 지도 위에 없으면 거리뷰 레이어를 지도에 추가합니다.
+    if (streetLayer.getMap()) {
+        streetLayer.setMap(null);
+    } else {
+        streetLayer.setMap(map);
+    }
+});
+
+
+naver.maps.Event.addListener(map, 'streetLayer_changed', function(streetLayer){
+    if (streetLayer){
+        btn.addClass('control-on');
+    }else{
+        btn.removeClass('control-on');
+    }
+});
+
+
 naver.maps.Event.addListener(map, 'click', function(e) {
     marker.setPosition(e.coord);
 
     //alert('Your current position is : '+e.coord);
     console.log('Your current position is : '+e.coord);
+
+    if(streetLayer.getMap()){
+        var LatLng = e.coord;
+
+        pano.setPosition(LatLng);
+    }
 });
 
+//////
 
 
-</script>
 
- <script>
+
+
+
+//////
+var pano = null;
+
 var panoramaOptions = {
     position: new naver.maps.LatLng(37.60011214750527, 126.70897451513594),
     size: new naver.maps.Size(800, 600),
@@ -237,7 +298,6 @@ var panoramaOptions = {
     }
 };
 
-var pano = null;
 
 function initPanorama() {
     pano = new naver.maps.Panorama("pano", {
