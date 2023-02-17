@@ -18,14 +18,24 @@
 </head>
 <body>
 <div id="map" style="width:100%;height:550px;">
-    <div class="buttons">
-        <input id="interaction" type="button" name="지도 인터렉션" value="지도 인터렉션" class="control-btn" />
-        <input id="kinetic" type="button" name="관성 드래깅" value="관성 드래깅" class="control-btn" />
-        <input id="tile-transition" type="button" name="타일 fadeIn 효과" value="타일 fadeIn 효과" class="control-btn" />
-        <input id="controls" type="button" name="모든 지도 컨트롤" value="모든 지도 컨트롤" class="control-btn" />
-        <input id="min-max-zoom" type="button" name="최소/최대 줌 레벨" value="최소/최대 줌 레벨: 10 ~ 21" class="control-btn" />
-    </div>
+<div class="buttons">
+    <input id="interaction" type="button" name="지도 인터렉션" value="지도 인터렉션" class="control-btn" />
+    <input id="kinetic" type="button" name="관성 드래깅" value="관성 드래깅" class="control-btn" />
+    <input id="tile-transition" type="button" name="타일 fadeIn 효과" value="타일 fadeIn 효과" class="control-btn" />
+    <input id="controls" type="button" name="모든 지도 컨트롤" value="모든 지도 컨트롤" class="control-btn" />
+    <input id="min-max-zoom" type="button" name="최소/최대 줌 레벨" value="최소/최대 줌 레벨: 10 ~ 21" class="control-btn" />
 </div>
+</div>
+
+<form id="search-form">
+<label for="start-point">출발지:</label>
+<input type="text" id="start-point" name="start-point"><br>
+<label for="end-point">도착지:</label>
+<input type="text" id="end-point" name="end-point"><br>
+<button type="submit">검색</button>
+</form>
+<div id="result"></div>
+
 <div id="pano" style="width:100%;height:300px;"></div>
 
 
@@ -205,6 +215,49 @@ $("#controls").on("click", function(e) {
 });
 
 $("#interaction, #tile-transition, #controls").addClass("control-on");
+
+//////
+
+$(document).ready(function() {
+  $('#search-form').submit(function(event) {
+    event.preventDefault();
+    var start = $('#start-point').val();
+    var end = $('#end-point').val();
+    var url = 'https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving?start=' + start + '&goal=' + end;
+    $.ajax({
+      url: url,
+      type: 'GET',
+      headers: {
+        'X-NCP-APIGW-API-KEY-ID': 'nn9o99r7mj',
+        'X-NCP-APIGW-API-KEY': 'BVChsbUpUyKDWL3AlDEo72VR97E7AGGTeKHcQY7b'
+      },
+      success: function(response) {
+        var path = response.route.traoptimal[0].path;
+        var points = path.map(function(point) {
+          return new naver.maps.LatLng(point.latitude, point.longitude);
+        });
+        var line = new naver.maps.Polyline({
+          path: points,
+          strokeColor: '#f00',
+          strokeWeight: 2,
+          strokeOpacity: 0.5
+        });
+        line.setMap(map);
+      },
+      error: function(xhr, status, error) {
+        $('#result').text('검색에 실패했습니다: ' + error);
+      }
+    });
+  });
+
+//   var mapOptions = {
+//     center: new naver.maps.LatLng(37.60011214750527, 126.708974515135940),
+//     zoom: 10
+//   };
+//   var map = new naver.maps.Map('map', mapOptions);
+});	
+
+////////
 
 //마커
 var position = new naver.maps.LatLng(37.60011214750527, 126.70897451513594);
